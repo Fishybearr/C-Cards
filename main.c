@@ -28,8 +28,9 @@ int main(void)
     
     //creates a tmp card for testing
     card card1;
-    card1.suit = 1;
-    card1.num = 10;
+    card1.suit = 2;
+    card1.num = 14;
+    card1.isFlipped = 0;
     
     //creates another tmp card for testing
     card healthCard1;
@@ -65,8 +66,15 @@ int main(void)
         //TODO: Create a function that takes in a rect for collision
         //and sets the card data when clicked
         mousePoint = GetMousePosition();
+        
+        
+        /*
+            This is all for one obj, ideally this can all be moved to a function
+            so each obj doesn't take up half of the script
+        */
         if(CheckCollisionPointRec(mousePoint,drawRect))
         {
+            //create fucntion that does all this and just pass in drawRect and mousePoint
             if(IsMouseButtonDown(MOUSE_BUTTON_LEFT))
             {
                 mouseState = 1;  
@@ -74,36 +82,28 @@ int main(void)
             
             if(IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && mouseState == 1)
             {
-                mouseState = 0;
-                if(cardPtr->suit == 2)
-                {
-                    cardPtr->suit = 1;
-                }
-                 if(cardPtr->num > 1)
-                {
-                    //for anims just check getTime and make sure enough time
-                    //has elapsed
-                    
-                    //set actualValue that will get used
-                    cardPtr->num = cardPtr->num-1;   
-                }
-                else
-                {
-                    cardPtr->suit = 2;
-                    cardPtr->num = 14;
-
-                }
-                 //frameRec = setCardIndex(cardPtr);
+                //resest mouse state
+                //mouseState = 0;
+                cardPtr-> num = 10;
+                cardPtr->suit = 1;
+                
+                 if(cardPtr->isFlipped == 0)
+                 {
+                  frameRec = FlipCard(cardPtr);
                  
                  //set time of click
                  clickTime = GetTime();
                  //set anim to flip frame
                  Rectangle change = {((float)cardText->width/14) *13,((float)cardText->height/4) *0,(float)cardText->width/14,(float)cardText->height/4};
                  frameRec = change;
+                 }
+                 
             }
   
         }
         
+        //There's prob going to have to be one of these for each card
+        //so it can easily be made a function
          if(clickTime + .1f <= GetTime())
             {
                 frameRec = setCardIndex(cardPtr);
@@ -111,7 +111,7 @@ int main(void)
         
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        DrawTexture(cards,15,40,WHITE);
+        //DrawTexture(cards,15,40,WHITE);
         DrawTexturePro(*cardText,frameRec,drawRect,orig,0.0f,WHITE);
         DrawTexturePro(*cardText,healthSource,healthCard,orig,0.0f,WHITE);
         EndDrawing();

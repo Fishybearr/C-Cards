@@ -1,5 +1,7 @@
 #include <stdlib.h> 
 #include "main.h" //I think it's okay to include this here as well as main.c
+
+//TODO: Move this to a shard header file
 typedef struct card
 {
     int suit;
@@ -25,4 +27,38 @@ Rectangle setCardIndex(card* card)
     Rectangle sourceRect = {((float)cardText->width/14) *xPos,((float)cardText->height/4) *yPos,(float)cardText->width/14,(float)cardText->height/4};
     
     return sourceRect;
+}
+
+//FlipCard
+Rectangle FlipCard(card* card)
+{
+    Rectangle outRect;
+    if(card->num != 14 || card->num != 2)
+    {
+        //flip to face
+        card->isFlipped = 1;
+        Rectangle outRect = setCardIndex(card);
+        return outRect;
+    }
+    else
+    {
+        //means card was already flipped
+        return outRect;
+    }
+    
+    
+    
+    /*
+    else if(card->suit != 2)
+    {
+        //flip to face
+    }
+    */
+   
+   /* This would be used to flip card to back
+    else
+    {
+        //flip card back 
+    }
+    */
 }
