@@ -9,17 +9,10 @@ typedef struct card
     int isFlipped; //0 means face down, 1 means face up
 } card;
 
- //extern Texture2D* cards;
-   // const Texture2D cardsBase = LoadTexture("images/CardFullTest.png");
-
 Rectangle setCardIndex(card* card)
 {
-    //Set up a ref for this because it should not be crearted twice
-    //Texture2D cards = LoadTexture("images/CardFullTest.png");
-    //Texture2D cards = *cardText;
     int xPos = 0;
     int yPos = 0;
-    
     
     xPos = (card->num) -1;
     yPos = (card->suit) -1;
@@ -33,6 +26,7 @@ Rectangle setCardIndex(card* card)
 Rectangle FlipCard(card* card)
 {
     Rectangle outRect;
+    //This runs anytime card is not 2,14 which is back card
     if(card->num != 14 || card->num != 2)
     {
         //flip to face
@@ -40,25 +34,26 @@ Rectangle FlipCard(card* card)
         Rectangle outRect = setCardIndex(card);
         return outRect;
     }
-    else
+    else //This is where you would flip card to back if needed
     {
         //means card was already flipped
         return outRect;
     }
-    
-    
-    
-    /*
-    else if(card->suit != 2)
-    {
-        //flip to face
-    }
-    */
    
-   /* This would be used to flip card to back
+}
+
+//return 0 for false, non 0 for true
+
+//So this will run each frame for each card. mouse State will need to be set unique for each card
+//This will stop you from clicking on one card and releasing on another
+int checkCardClicked(Vector2 mousePos,Rectangle cardDrawRect,double mouseState)
+{
+    if(CheckCollisionPointRec(mousePos,cardDrawRect))
+    {
+        //if()
+    }
     else
     {
-        //flip card back 
+        return 0;
     }
-    */
 }
