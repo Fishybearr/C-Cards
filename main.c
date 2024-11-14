@@ -11,6 +11,53 @@ int main(void)
     
     InitWindow(screenWidth,screenHeight,"Cards Test window");
     
+    //set fps
+    SetTargetFPS(60);
+    
+    //stops escape from closing game
+    SetExitKey(KEY_NULL);
+    
+    //MENU
+    
+    //Would create main menu here and run use some sort of loop that can
+    //be broken when button is clicked
+    Rectangle PlayButton = {400-50,200,100,25};
+    Vector2 menuMousePos = {0.0,0.0};
+    
+    char* Title = "Weird Card Game";
+    
+    while(!WindowShouldClose())
+    {
+        //get mousePos
+        menuMousePos = GetMousePosition();
+        //Check if button is pressed
+        if(CheckCollisionPointRec(menuMousePos,PlayButton))
+        {
+            if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            {
+                    break;
+            }
+            
+        }
+        //DrawButton
+        BeginDrawing();
+         ClearBackground(BLACK);
+         DrawText(Title,400-150,100,34,RAYWHITE);
+         DrawRectangleRec(PlayButton,RAYWHITE);
+         DrawText("Play",400-25,200,24,BLACK);
+        EndDrawing();
+    }
+    //closes window without running any of the gameplay code
+    if(WindowShouldClose())
+    {
+        //fprintf(stderr,"closing");
+        return 0;
+    }
+    
+    //Actual Game
+    
+    //TODO: look into swapping mouseDown and mouseUp for a simple mousePressed
+    
     //Textures always have to be loaded after WindowInit
     Texture2D cards = LoadTexture("images/CardFullTest.png");
     
@@ -28,11 +75,6 @@ int main(void)
     //sets global card* var = to actual texture
     cardText =  &cards; //don't call any cardSystem func before this
     
-    //set fps
-    SetTargetFPS(60);
-    
-    //stops escape from closing game
-    SetExitKey(KEY_NULL);
     
     //mouse location
     Vector2 mousePoint ={0.0f,0.0f};
