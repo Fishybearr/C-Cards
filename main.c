@@ -9,6 +9,7 @@ int main(void)
     
     double clickTime = -1.0; //Error Value
     
+    //SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(screenWidth,screenHeight,"Cards Test window");
     
     //set fps
@@ -26,6 +27,10 @@ int main(void)
     
     char* Title = "Weird Card Game";
     
+    //IDEA: If I ever want to get horribly crazy I could start loading game logic
+    // and assets on a different thread while in the menu
+    //This game is so small though that I think that would honestly be worse for
+    //performance (really funny though)
     while(!WindowShouldClose())
     {
         //get mousePos
@@ -133,6 +138,13 @@ int main(void)
     //Main game loop
     while(!WindowShouldClose())
     {
+        /*
+        if(IsWindowResized())
+        {
+            screenWidth = GetScreenWidth();
+           screenHeight = GetScreenHeight(); 
+        }
+        */
         //gets current mousePos
         mousePoint = GetMousePosition();
         
@@ -152,8 +164,10 @@ int main(void)
             {
                 //resest mouse state
                 //mouseState = 0;
-                enemyPtr-> num = 10;
+                //enemyPtr-> num = 10;
                 enemyPtr->suit = 1;
+                //Eventually this will probably how cards are generated
+                enemyPtr->num = GetRandomValue(1,13);
                 
                  if(enemyPtr->isFlipped == 0)
                  {
@@ -168,6 +182,19 @@ int main(void)
                  
             }
   
+        }
+        
+        if(CheckCollisionPointRec(mousePoint,healthDraw))
+        {
+            //This is much better solution I think
+            //Just need to set a delay in here so anim can play
+            if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            {
+                //does not skip cards thankfully
+                healthPtr->num= GetRandomValue(1,13);
+                healthPtr->suit = 1;
+                healthSource = setCardIndex(healthPtr);
+            }
         }
         
         //There's prob going to have to be one of these for each card
@@ -190,24 +217,10 @@ int main(void)
     //fprintf(stderr,"enemyCard suit: %d",enemyCard.suit);
     //create some sort of procedural card system
     
-    //This 10 needs to be a variable
-    for(int i = 0; i < 10;i++)
-    {
-        if(cardArr[i] != NULL)
-        {
-            card* tmpFree = NULL;
-            //fprintf(stderr,"freeing %d: ",i);
-            tmpFree = cardArr[i];
-            free(tmpFree);
-        }
-    }
-    //Proves that cardArr[] is story copies so cards are not actually freed
-    //fprintf(stderr,"cardArr1: %d",cardArr[0]->num);
-    //FIXME: This is the temp solution until I switch cardArr to a card**
-    free(cardArr[0]);
-    free(cardArr[1]);
-    free(cardArr[2]);
-    free(cardArr[3]);
+    //I'm stupid and you can't free pointers that weren't malloced
+    //so I need to figure out what I'm doing here with all that
+ 
+   
         
     //Unload cards texture
     UnloadTexture(*cardText);

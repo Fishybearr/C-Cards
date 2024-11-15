@@ -51,6 +51,7 @@ int checkCardClicked(Vector2 mousePos,Rectangle cardDrawRect,double mouseState)
     if(CheckCollisionPointRec(mousePos,cardDrawRect))
     {
         //if()
+        return 0;
     }
     else
     {
