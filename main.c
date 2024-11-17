@@ -84,37 +84,23 @@ int main(void)
     //mouse location
     Vector2 mousePoint ={0.0f,0.0f};
     
+    //TODO: Create a hashmap for each card as well as their draw rectangles
+    
     //creates an enemy card for testing
-    card enemyCard;
-    enemyCard.suit = 2;
-    enemyCard.num = 14;
-    enemyCard.isFlipped = 0;
-    card* enemyPtr = &enemyCard;
-    cardArr[0] = enemyPtr;
+    cardArr[0] = CreateCard(2,14);
+    cardArr[0]->isFlipped = 0;
     
     //creates a health card for testing
-    card healthCard;
-    healthCard.suit = 2;
-    healthCard.num = 14;
-    healthCard.isFlipped = 0;
-    card* healthPtr = &healthCard;
-    cardArr[1] = healthPtr;
+    cardArr[1] = CreateCard(1,-1); //currently only uses hearts
+    cardArr[1]->isFlipped = 1;
     
     //Creates attackCard1
-    card attack1;
-    attack1.suit = 1;
-    attack1.num = 4;
-    attack1.isFlipped = 0;
-    card* A1Ptr = &attack1;
-    cardArr[2] = A1Ptr;
+    cardArr[2] = CreateCard(2,14);
+    cardArr[2]->isFlipped = 0;
     
     //Creates attackCard2
-    card attack2;
-    attack2.suit = 1;
-    attack2.num = 7;
-    attack2.isFlipped = 0;
-    card* A2Ptr = &attack2;
-    cardArr[3] = A2Ptr;
+    cardArr[3] = CreateCard(2,14);
+    cardArr[3]->isFlipped = 0;
    
     //current mouse state
     bool mouseState = 0;
@@ -122,10 +108,16 @@ int main(void)
     Vector2 orig = {0.0f,0.0f};
     
     //source rectangle of enemy
-    Rectangle enemySource = setCardIndex(enemyPtr);
+    Rectangle enemySource = setCardIndex(cardArr[0]);
     
     //source rect of health
-    Rectangle healthSource = setCardIndex(healthPtr);
+    Rectangle healthSource = setCardIndex(cardArr[1]);
+    
+    //Anytime CreateCard is used, that card will then have to be freed as it was malloced
+    Rectangle attack1Source = setCardIndex(cardArr[2]);
+    
+    Rectangle attack2Source = setCardIndex(cardArr[3]);
+    
     
     //TODO: Write card center function and then offset the locations of draw rects from there
  
@@ -134,6 +126,12 @@ int main(void)
     
     //health Draw Rect
     Rectangle healthDraw = {(float)(screenWidth/2) -(cardText->width/8),(float)(screenHeight/2) - (cardText->height/2) + 200,(float)(cardText->width/14) * 5,(float)(cardText->height/4) *5};
+    
+    //attackLeft Draw Rect
+    Rectangle attackLDraw = {(float)(screenWidth/2 - 100) -(cardText->width/8),(float)(screenHeight/2) - (cardText->height/2) + 200,(float)(cardText->width/14) * 5,(float)(cardText->height/4) *5};
+    
+    //attackRight Draw Rect
+    Rectangle attackRDraw = {(float)(screenWidth/2 + 100) -(cardText->width/8),(float)(screenHeight/2) - (cardText->height/2) + 200,(float)(cardText->width/14) * 5,(float)(cardText->height/4) *5};
     
     //Main game loop
     while(!WindowShouldClose())
@@ -152,9 +150,12 @@ int main(void)
             This is all for one obj, ideally this can all be moved to a function
             so each obj doesn't take up half of the script
         */
+        
+        /*
         if(CheckCollisionPointRec(mousePoint,enemyDraw))
         {
             //create fucntion that does all this and just pass in enemyDraw and mousePoint
+            
             if(IsMouseButtonDown(MOUSE_BUTTON_LEFT))
             {
                 mouseState = 1;  
@@ -165,13 +166,13 @@ int main(void)
                 //resest mouse state
                 //mouseState = 0;
                 //enemyPtr-> num = 10;
-                enemyPtr->suit = 1;
+                cardArr[0]->suit = 1;
                 //Eventually this will probably how cards are generated
-                enemyPtr->num = GetRandomValue(1,13);
+                cardArr[0]->num = GetRandomValue(1,13);
                 
-                 if(enemyPtr->isFlipped == 0)
+                 if(cardArr[0]->isFlipped == 0)
                  {
-                  enemySource = FlipCard(enemyPtr);
+                  enemySource = FlipCard(cardArr[0]);
                  
                  //set time of click
                  clickTime = GetTime();
@@ -183,32 +184,89 @@ int main(void)
             }
   
         }
+        */
         
-        if(CheckCollisionPointRec(mousePoint,healthDraw))
-        {
-            //This is much better solution I think
-            //Just need to set a delay in here so anim can play
-            if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-            {
-                //does not skip cards thankfully
-                healthPtr->num= GetRandomValue(1,13);
-                healthPtr->suit = 1;
-                healthSource = setCardIndex(healthPtr);
-            }
-        }
+        //TODO: Most of this logic can probaby be moved to another function to keep
+        // the main update loop cleaner
+        
+                //click handling for enemy card
+                if(checkCardClicked(mousePoint,enemyDraw))
+                {
+                    if(cardArr[0]->isFlipped == 0)
+                    {
+                        cardArr[0]->num= GetRandomValue(1,13);
+                        cardArr[0]->suit = 1;
+                        cardArr[0]->isFlipped = 1;
+                        enemySource = setCardIndex(cardArr[0]);   
+                    }
+                }
+                
+                //Have extra logic in attacks cards so only one can be pick at a time
+                 if(checkCardClicked(mousePoint,attackLDraw))
+                {
+                    if(cardArr[2]->isFlipped == 0)
+                    {
+                        cardArr[2]->num= GetRandomValue(1,13);
+                        cardArr[2]->suit = 1;
+                        cardArr[2]->isFlipped = 1;
+                        attack1Source = setCardIndex(cardArr[2]);   
+                    }
+                }
+                
+                if(checkCardClicked(mousePoint,attackRDraw))
+                {
+                    if(cardArr[3]->isFlipped == 0)
+                    {
+                        cardArr[3]->num= GetRandomValue(1,13);
+                        cardArr[3]->suit = 1;
+                        cardArr[3]->isFlipped = 1;
+                        attack2Source = setCardIndex(cardArr[3]);   
+                    }
+                }
+           
+           /*)
+                //click handling for health card
+               if(checkCardClicked(mousePoint,healthDraw))
+               {
+               
+                    if(cardArr[1]->isFlipped == 0)
+                    {
+                        cardArr[1]->num= GetRandomValue(1,13);
+                        cardArr[1]->suit = 1;
+                        cardArr[1]->isFlipped = 1;
+                        healthSource = setCardIndex(cardArr[1]);
+                    }
+               }
+               */
+               
+               
+              
         
         //There's prob going to have to be one of these for each card
         //so it can easily be made a function
+        
+        /*
          if(clickTime + .1f <= GetTime())
             {
-                enemySource = setCardIndex(enemyPtr);
+                enemySource = setCardIndex(cardArr[0]);
             }
+            */
+            
         
         BeginDrawing();
-        ClearBackground(RAYWHITE);
+        ClearBackground(DARKGREEN);
         //DrawTexture(cards,15,40,WHITE);
+        
+        //enemyCard
         DrawTexturePro(*cardText,enemySource,enemyDraw,orig,0.0f,WHITE);
+        
+        //HealthCard
         DrawTexturePro(*cardText,healthSource,healthDraw,orig,0.0f,WHITE);
+        
+        //attackCards
+        DrawTexturePro(*cardText,attack1Source,attackLDraw,orig,0.0f,WHITE);
+        DrawTexturePro(*cardText,attack2Source,attackRDraw,orig,0.0f,WHITE);
+        
         EndDrawing();
         
        
@@ -217,10 +275,20 @@ int main(void)
     //fprintf(stderr,"enemyCard suit: %d",enemyCard.suit);
     //create some sort of procedural card system
     
-    //I'm stupid and you can't free pointers that weren't malloced
-    //so I need to figure out what I'm doing here with all that
- 
-   
+    //Will free all cards in cardArr. Will probably have to do this with hashmap later
+    //Using magic numbers but this will just be the size of cardArr
+   for(int i = 0; i < 10;i++)
+    {
+        if(cardArr[i] != NULL)
+        {
+            free(cardArr[i]);
+        }
+    }
+    
+    
+
+    //Used as a test for freeing malloced cards
+    //free(cardArr[6]);
         
     //Unload cards texture
     UnloadTexture(*cardText);
