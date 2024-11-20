@@ -8,8 +8,8 @@ typedef struct card
     int suit;
     int num;
     int isFlipped; //0 means face down, 1 means face up
-    int health;
 } card;
+
 
 //Creates a card and adds it to the Card array;
 // -1 means random, otherwise suit needs to be between  1 and 4, num needs to be between 1 and 14
@@ -102,5 +102,28 @@ int checkCardClicked(Vector2 mousePos,Rectangle cardDrawRect)
     else
     {
         return 0;
+    }
+}
+
+//subtracts a card's value from another card and changes DrawCard for attacked Card
+Rectangle AttackCard(card* attacking, card* attacked)
+{
+    Rectangle source;
+    
+    //don't destroy attacked
+    if(attacked->num > attacking->num)
+    {
+        attacked->num -= attacking->num;
+        source = setCardIndex(attacked);
+        return source;
+    }
+    //destroy attacked
+    else
+    {
+        // currently just makes the texture fully transparent
+        attacked->num = 14;
+        attacked->suit = 3;
+        source = setCardIndex(attacked);
+        return source;
     }
 }

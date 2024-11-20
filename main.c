@@ -209,7 +209,16 @@ int main(void)
                         cardArr[2]->num= GetRandomValue(1,13);
                         cardArr[2]->suit = 1;
                         cardArr[2]->isFlipped = 1;
-                        attack1Source = setCardIndex(cardArr[2]);   
+                        attack1Source = setCardIndex(cardArr[2]);       
+                    }
+                    else
+                    {
+                        //attacks enemy
+                        enemySource = AttackCard(cardArr[2],cardArr[0]);
+                        
+                        //removes card from player
+                        attackLDraw.x -=400;
+                        attackLDraw.y -= 400;
                     }
                 }
                 
@@ -220,7 +229,16 @@ int main(void)
                         cardArr[3]->num= GetRandomValue(1,13);
                         cardArr[3]->suit = 1;
                         cardArr[3]->isFlipped = 1;
-                        attack2Source = setCardIndex(cardArr[3]);   
+                        attack2Source = setCardIndex(cardArr[3]);                        
+                    }
+                     else
+                    {
+                        //attacks enemy
+                        enemySource = AttackCard(cardArr[3],cardArr[0]);
+                        
+                        //removes card from player
+                        attackRDraw.x +=400;
+                        attackRDraw.y += 400;
                     }
                 }
            
